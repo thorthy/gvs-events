@@ -1,0 +1,20 @@
+{
+  "name": "gvs-events",
+  "version": "0.1.0",
+  "description": "Organizador de materiais para eventos: apresentações, PDFs, vídeos e cortes para palestras e congressos",
+  "type": "module",
+  "main": "src/server.js",
+  "bin": {
+    "gvs-events": "bin/gvs-events.js"
+  },
+  "scripts": {
+    "start": "node bin/gvs-events.js serve",
+    "dev": "node --watch bin/gvs-events.js serve",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "keywords": ["eventos", "palestras", "congressos", "powerpoint", "pdf", "video", "cortes"],
+  "license": "MIT"
+}
