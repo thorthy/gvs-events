@@ -7,6 +7,9 @@ import { exportOperatorFolder } from '../src/exporter.js';
 import { scanFolder, suggestSession } from '../src/scan.js';
 import { createBackup } from '../src/backup.js';
 import { formatBytes } from '../src/naming.js';
+import { readFileSync } from 'node:fs';
+
+const VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 const args = process.argv.slice(2);
 const command = args.find((a) => !a.startsWith('--')) || 'serve';
@@ -64,7 +67,7 @@ const commands = {
     const host = flags.host || process.env.GVS_HOST || '0.0.0.0';
     await app.start({ port, host });
     const tools = app.media.status();
-    console.log(`\n  GVS Events v${JSON.parse(await import('node:fs').then((fs) => fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'))).version}`);
+    console.log(`\n  GVS Events v${VERSION}`);
     console.log(`  Biblioteca: ${app.root}`);
     console.log(`  Local:      http://localhost:${port}`);
     for (const a of lanAddresses()) console.log(`  Rede:       http://${a.address}:${port}  (${a.name})`);

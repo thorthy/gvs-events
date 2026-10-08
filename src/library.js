@@ -890,11 +890,12 @@ export class Library {
     for (const e of this.data.events) if (match(e.name, e.venue, e.city, e.client, e.description)) hits.push({ type: 'evento', id: e.id, eventId: e.id, title: e.name, subtitle: [e.startDate, e.venue].filter(Boolean).join(' · ') });
     for (const s of this.data.sessions) {
       const speakers = (s.speakerIds || []).map((id) => this.data.speakers.find((x) => x.id === id)?.name || '');
-      if (match(s.title, s.description, s.notes, ...speakers, ...(s.tags || []))) hits.push({ type: 'sessao', id: s.id, eventId: s.eventId, title: s.title, subtitle: `${eventName(s.eventId)} · ${s.date || ''} ${s.start || ''}`.trim() });
+      if (match(s.title, s.description, s.notes, ...speakers, ...(s.tags || []))) hits.push({ type: 'sessao', id: s.id, eventId: s.eventId, title: s.title, subtitle: [eventName(s.eventId), s.date ? s.date.split('-').reverse().join('/') : '', s.start, ...speakers].filter(Boolean).join(' · ') });
     }
-    for (const sp of this.data.speakers) if (match(sp.name, sp.company, sp.role, sp.email)) hits.push({ type: 'palestrante', id: sp.id, eventId: sp.eventId, title: sp.name, subtitle: `${eventName(sp.eventId)} · ${sp.company || ''}`.trim() });
-    for (const a of this.data.assets) if (match(a.name, a.originalName, a.notes, ...(a.tags || []))) hits.push({ type: 'material', id: a.id, eventId: a.eventId, title: a.originalName, subtitle: `${eventName(a.eventId)} · ${KINDS[a.kind]?.label || a.kind} · ${a.status}` });
-    for (const c of this.data.clips) if (match(c.title, c.description, c.notes, ...(c.destinations || []), ...(c.tags || []))) hits.push({ type: 'corte', id: c.id, eventId: c.eventId, title: c.title, subtitle: `${eventName(c.eventId)} · ${c.status}` });
+    for (const sp of this.data.speakers) if (match(sp.name, sp.company, sp.role, sp.email)) hits.push({ type: 'palestrante', id: sp.id, eventId: sp.eventId, title: sp.name, subtitle: [eventName(sp.eventId), sp.company].filter(Boolean).join(' · ') });
+    const statusLabel = (st) => ({ recebido: 'Recebido', em_revisao: 'Em revisão', aprovado: 'Aprovado', final: 'Final', rejeitado: 'Rejeitado', substituido: 'Substituído', planejado: 'Planejado', renderizando: 'Renderizando', revisao: 'Em revisão', publicado: 'Publicado', erro: 'Erro' })[st] || st;
+    for (const a of this.data.assets) if (match(a.name, a.originalName, a.notes, ...(a.tags || []))) hits.push({ type: 'material', id: a.id, eventId: a.eventId, title: a.originalName, subtitle: `${eventName(a.eventId)} · ${KINDS[a.kind]?.label || a.kind} · ${statusLabel(a.status)}` });
+    for (const c of this.data.clips) if (match(c.title, c.description, c.notes, ...(c.destinations || []), ...(c.tags || []))) hits.push({ type: 'corte', id: c.id, eventId: c.eventId, title: c.title, subtitle: `${eventName(c.eventId)} · ${statusLabel(c.status)}` });
     return hits.slice(0, limit);
   }
 }
